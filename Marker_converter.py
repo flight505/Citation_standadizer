@@ -169,12 +169,12 @@ def standardize_citations_gemini(text: str) -> Tuple[str, float]:
         prompt = f"""
         Standardize the citations in this section to numeric format [n] while preserving the exact document structure.
         Rules:
-        1. Handle cases where citations have mistakes due to conversion [e1], [c:1] etc.
+        1. Handle cases where citations have mistakes due to conversion [e1], [c:1], "In another wor[k22]," etc. should be fixed to [1], [1], "In another work[22]," and so on. 
         2. Merges fragmented citations (e.g. [Wu] [et] [al.] [(2021)]) into a single citation [Wu et al., 2021]
         3. Remove any accidental double brackets and escapes (e.g. [[n]], [[n1,n2,n3]], [/[n]/], [/n/])
         4. Convert citations like (Author et al., 2020), [Author et al., 2020], Author et al., (2020), etc. to [n] format
-        5. Format multiple citations as [1,2,3]
-        6. Keep figure/table references unchanged (e.g. 'Fig. 1', 'Table 1')
+        5. Format multiple citations as [1,2,3], if a range is present, always format as [1,2,3]
+        6. Format figure/table citations/references as 'Fig. (1)', 'Table. (1)', etc. so that they are not mistaken for citations. Any mistaking of citations in the original text should be corrected, and errors in the original text should be corrected.
         7. Use these existing citation numbers:
         {citation_tracker.get_mapping_str()}
         
@@ -183,7 +183,7 @@ def standardize_citations_gemini(text: str) -> Tuple[str, float]:
         prompts.append(prompt)
 
     # Process sections in parallel batches
-    generation_config = {"temperature": 0.0, "top_p": 0.8, "top_k": 40}
+    generation_config = {"temperature": 0.1, "top_p": 0.8, "top_k": 40}
 
     # Run async processing
     results = asyncio.run(
