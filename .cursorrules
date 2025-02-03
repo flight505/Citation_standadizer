@@ -1,0 +1,59 @@
+{
+    "project": {
+        "name": "Academic Paper Processing Pipeline",
+        "description": "Robust pipeline for processing academic papers with metadata extraction, citation and reference Standardizing, and content preservation",
+        "stages": {
+            "identification": {
+                "primary": "pdf2doi for DOI/arXiv extraction",
+                "fallback": ["manual identifier extraction", "filename parsing"]
+            },
+            "metadata": {
+                "primary": "CrossRef API for papers with DOI",
+                "fallback": ["arXiv API only for arXiv papers", "Anystyle parsing"]
+            },
+            "references": {
+                "primary": "CrossRef citation data",
+                "fallback": ["Anystyle reference parsing", "gemini-1.5-flash-8b extraction"]
+            },
+            "citations": {
+                "primary": "structured data matching",
+                "fallback": ["fuzzy matching", "gemini-1.5-flash-8b Standardizing"]
+            }
+        }
+    },
+    "code_standards": {
+        "python": {
+            "style": {
+                "type_checking": "mypy with strict mode",
+                "naming": "PEP 8 with intuitive names",
+                "documentation": "Google style docstrings",
+                "error_handling": "Rich console output"
+            },
+            "practices": {
+                "async": "Use asyncio for API calls",
+                "validation": "Pydantic for data models",
+                "logging": "Rich for console output",
+                "testing": "pytest with fixtures"
+            }
+        }
+    },
+    "implementation_order": [
+        "Create pipeline.py base structure",
+        "Implement identifier extraction",
+        "Add metadata fetching",
+        "Integrate reference processing",
+        "Add citation Standardizing",
+        "Implement content preservation"
+    ],
+    "backup_strategies": {
+        "api_failures": {
+            "crossref": ["Cache results", "Use arXiv API", "Fall back to Anystyle"],
+            "arxiv": ["Use cached data", "Fall back to manual extraction"],
+            "pdf2doi": ["Parse filename", "Extract from content", "Manual input"]
+        },
+        "parsing_failures": {
+            "references": ["Try alternative section markers", "Use gemini-1.5-flash-8b", "Keep original"],
+            "citations": ["Fuzzy match", "gemini-1.5-flash-8b normalization", "Preserve original"]
+        }
+    }
+} 
